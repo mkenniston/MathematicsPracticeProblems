@@ -45,11 +45,13 @@ class PageLayout
       # fill one page
       break if item_number > last_item_number
       f.puts "\\newpage" if item_number > 0
-      header = "{\\small #{title}" +
-               "\\hfill Page #{page_number + 1}" +
-               "\\hfill Copyright \\copy #{Time.now.year} " +
-               "http://MathematicsPracticeProblems.com}"
-      f.puts header
+      header = "#{title}" +
+               "\\hfill " +
+               "Page #{page_number + 1}"
+      footer = "Copyright \\copyright\\ #{Time.now.year} " +
+               "Michael S. Kenniston\\hfill " +
+               "http://MathematicsPracticeProblems.com"
+      f.puts "{\\small #{header}}"
       f.puts "\\\\"
       f.puts "\\rule{\\textwidth}{#{@rule_thickness}}"
       f.puts "\\begin{multicols}{#{num_cols}}"
@@ -68,6 +70,7 @@ class PageLayout
         item_number += 1
       end
       f.puts "\\end{multicols}"
+      f.puts "{\\small \\begin{center}#{footer}\\end{center}}"
       page_number += 1
     end
   end
