@@ -13,7 +13,7 @@
 # MathematicsPracticeProblems is distributed in the hope that it will be
 # useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-# General Public License for more details.  
+# General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with MathematicsPracticeProblems.  If not, see
@@ -23,66 +23,77 @@
 # reduced to lowest terms.
 
 require 'rational'
-require 'PageLayout'
+require 'ProblemMaker'
 
-def choose_fraction(limit)
-  which = rand(30)
-  if which == 0
-    den = 1 + rand(limit)
-    num = 0
-    return [num, den, 0, 1]
-  elsif which == 1
-    den = 1 + rand(limit)
-    num = den
-    return [num, den, 1, 1]
-  elsif which < 25
-    # guaranteed reducible
-    begin
-      big = 1 + rand(limit/3)
-      a = 1 + rand(limit/big)
-      b = 1 + rand(limit/big)
-      num = big * [a, b].min
-      den = big * [a, b].max
-      gcd = num.gcd den
-    end until den != num
-    return [num, den, num/gcd, den/gcd]
-  else
-    # guaranteed not reducible
-    begin
-      a = 1 + rand(limit)
-      b = 1 + rand(limit)
-    end until (a.gcd b) == 1
-    num = [a, b].min
-    den = [a, b].max
-    return [num, den, num, den]
+module MathematicsPracticeProblems
+
+class LowestTerms < ProblemMaker
+  def initialize(options = {})
+    super
+    @options.merge!({ :limit => 20,
+                      :include_zero => true,
+                      :include_one => true,
+                      :include_irreducible => true,
+                    })
+    @options.merge!(options)
+    # set up relative amounts of different types of fractions
+    num_zero = @options[:include_zero] ? 1 : 0
+    num_one = @options[:include_one] ? 1: 0
+    num_reducible = 23
+    num_irreducible = @options[:include_irreducible] ? 5 : 0
+    @threshold_zero = num_zero
+    @threshold_one = @threshold_zero + num_one
+    @threshold_reducible = @threshold_one + num_reducible
+    @threshold_irreducible = @threshold_reducible + num_irreducible
   end
-end
 
-def generate_set(name, limit)
-  cols = 5
-  rows = 7
-  per_page = cols * rows
-  pages = 60
-  layout = PageLayout.new(name, cols, per_page, cols, per_page)
-  problems = []
-  answers = []
-  instructions = "Reduce to lowest terms:"
-  (1..(per_page * pages)).each do
-    prob_num, prob_den, ans_num, ans_den = choose_fraction(limit)
-    problems << instructions + "\\[\\frac{#{prob_num}}{#{prob_den}}\\]"
-    if ans_num == 0
-      answers << "\\[0\\]"
-    elsif ans_num == ans_den
-      answers << "\\[1\\]"
+  def generate
+    limit = @options[:limit]
+    which = 1 + random_int(@threshold_irreducible)
+    if which <= @threshold_zero
+      den = 1 + random_int(limit)
+      num = 0
+      return [num, den, 0, 1]
+    elsif which <= @threshold_one
+      den = 1 + random_int(limit)
+      num = den
+      return [num, den, 1, 1]
+    elsif which <= @threshold_reducible
+      # guaranteed reducible
+      begin
+        big = 2 + random_int(limit/3)
+        a = 1 + random_int(limit/big)
+        b = 1 + random_int(limit/big)
+        num = big * [a, b].min
+        den = big * [a, b].max
+      end until den != num
+      gcd = num.gcd den
+      return [num, den, num/gcd, den/gcd]
     else
-      answers << "\\[\\frac{#{ans_num}}{#{ans_den}}\\]"
+      # guaranteed not reducible
+      begin
+        a = 1 + random_int(limit)
+        b = 1 + random_int(limit)
+      end until (a.gcd b) == 1
+      num = [a, b].min
+      den = [a, b].max
+      return [num, den, num, den]
     end
   end
 
-  layout.fill(problems, answers)
-end
+  def format prob
+    q_num, q_den, a_num, a_den = prob
+    question = "Reduce to lowest terms: " +
+               "\\[\\frac{#{q_num}}{#{q_den}}\\]"
+    if a_num == 0
+      answer = "\\[0\\]"
+    elsif a_num == ans_den
+      answer = "\\[1\\]"
+    else
+      answer = "\\[\\frac{#{ans_num}}{#{ans_den}}\\]"
+    end
+    [question, answer]
+  end
 
-generate_set('LowestTerms-A', 20)
-generate_set('LowestTerms-B', 100)
-generate_set('LowestTerms-C', 1000)
-
+end  # class LowestTerms
+end  # module MathematicsPracticeProblems

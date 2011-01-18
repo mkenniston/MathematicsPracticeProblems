@@ -20,24 +20,24 @@
 # <http://www.gnu.org/licenses/>.
 
 #
-# Given a list of problems and answers (each a fragment of TeX code),
-# lay them out in pages.
+# Given a list of ProblemMakers, create a PDF file full of generated problems.
 
-class PageLayout
-  def initialize(basename,
-                 num_prob_cols, prob_per_page,
-                 num_ans_cols, ans_per_page)
-    @basename = basename
-    @num_prob_cols = num_prob_cols
-    @prob_per_page = prob_per_page
-    @num_ans_cols = num_ans_cols
-    @ans_per_page = ans_per_page
-    @rule_thickness = "0.3pt"
-    @hmargin = "0.5in"
-    @vmargin = "0.5in"
+module MathematicsPracticeProblems
+
+class ProblemSet
+  def initialize(options, maker_list)
+    @options = { :basename => 'test',
+                 :num_cols => 2,
+                 :probs_per_page => 30,
+                 :num_pages => 100,
+                 :rule_thickness => "0.3pt",
+                 :hmargin => "0.5in",
+                 :vmargin => "0.5in",
+               }.merge(options)
+    @maker_list = maker_list
   end
 
-  def fill_one(f, title, items, num_cols, num_per_page)
+  def fill_half(f, title, items)
     item_number = 0
     page_number = 0
     last_item_number = items.length - 1
@@ -53,9 +53,9 @@ class PageLayout
                "http://MathematicsPracticeProblems.com"
       f.puts "{\\small #{header}}"
       f.puts "\\\\"
-      f.puts "\\rule{\\textwidth}{#{@rule_thickness}}"
-      f.puts "\\begin{multicols}{#{num_cols}}"
-      (1..num_per_page).each do
+      f.puts "\\rule{\\textwidth}{#{@options[:rule_thickness]}}"
+      f.puts "\\begin{multicols}{#{@options[:num_cols]}}"
+      (1..@options[:probs_per_page]).each do
         break if item_number > last_item_number
         f.puts "\\begin{minipage}{\\columnwidth}"
         f.puts "\\setlength{\\parskip}{10pt}"
@@ -65,34 +65,61 @@ class PageLayout
         item = items[item_number]
         f.puts "#{item}"
         f.puts "\\\\" unless item.match("\\]$")
-        f.puts "\\rule{\\columnwidth}{#{@rule_thickness}}"
+        f.puts "\\rule{\\columnwidth}{#{@options[:rule_thickness]}}"
         f.puts "\\end{minipage}"
         item_number += 1
       end
       f.puts "\\end{multicols}"
+      f.puts "\\vfill"
       f.puts "{\\small \\begin{center}#{footer}\\end{center}}"
       page_number += 1
     end
   end
 
-  def fill(problems, answers)
-    f = open("#{@basename}.tex", "w") do |f|
+  def write_to_file(questions, answers)
+    f = open("#{@options[:basename]}.tex", "w") do |f|
       f.puts "\\documentclass[12pt,leqno]{report}"
-      f.puts "\\usepackage[hmargin=#{@hmargin},vmargin=#{@vmargin}]{geometry}"
+      f.puts "\\usepackage[hmargin=#{@options[:hmargin]}," +
+             "vmargin=#{@options[:vmargin]}]{geometry}"
       f.puts "\\usepackage{multicol}"
       f.puts "\\pagestyle{empty}"
       f.puts "\\begin{document}"
       f.puts "\\setlength{\\columnsep}{20pt}"
       f.puts "\\setlength{\\columnseprule}{0.5pt}"
       f.puts "\\setlength{\\parindent}{0pt}"
-      fill_one(f, "Problem set ``#{@basename}''", problems,
-               @num_prob_cols, @prob_per_page)
+      fill_half(f,
+                "Problem set ``#{@options[:basename]}''",
+                questions)
       f.puts "\\newpage"
-      fill_one(f, "Answer key for problem set ``#{@basename}''", answers,
-               @num_ans_cols, @ans_per_page)
+      fill_half(f,
+                "Answer key for problem set ``#{@options[:basename]}''",
+                answers)
       f.puts "\\end{document}"
     end
-    system "pdflatex #{@basename}.tex"
+    system "pdflatex #{@options[:basename]}.tex"
+  end
+
+  def generate_problems
+    questions = []
+    answers = []
+    maker_index = 0
+    total_probs = @options[:num_pages] * @options[:probs_per_page]
+    (1..total_probs).each do
+      maker = @maker_list[maker_index]
+      maker_index += 1
+      maker_index = 0 if maker_index >= @maker_list.length
+      prob = maker.generate
+      q, a = maker.format prob
+      questions << q
+      answers << a
+    end
+    return [questions, answers]
+  end
+
+  def print
+    questions, answers = generate_problems
+    write_to_file(questions, answers)
   end
 end
 
+end  # module MathematicsPracticeProblems

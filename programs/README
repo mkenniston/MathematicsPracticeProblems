@@ -1,0 +1,34 @@
+Definitions of terms:
+=====================
+
+FormattedProblem:  A question + an answer, formatted for LaTeX.
+
+Raw problem: A question + an answer, in internal list form
+The exact list form varies by the type of problem.
+The raw form is used primarily for testing.
+
+Question:  The part of the problem that is presented to the
+user.  It need not be literally phrased as a question, e.g. it could
+be something like "solve for x".
+
+Answer:  The part of the problem that is included in the answer key.
+
+Problem type: A particular form of problem, e.g. "convert an improper
+fraction to mixed form".
+
+ProblemMaker:  A class which generates problems, all of the same type.
+Different instances of a single class may generate different problem types
+in a general family, e.g. a class that does fractions might generate
+fractions with small, medium, or large numbers, or it might generate
+both proper and improper fractions, all depending on the arguments to
+its constructor.
+
+Problem set: A series of many problems.  A set may contain only a single
+problem type or it may contain many problem types.
+
+ProblemSetMaker:  The class which generates problem sets.
+When you create a ProblemSetMaker, you inject a list of ProblemMakers
+which it uses.  Thus there is only one class, but each instance
+of the class is customized for a particular problem set.
+This is the class which actually writes the PDF files.
+
