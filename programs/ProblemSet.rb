@@ -1,5 +1,3 @@
-#!/home/msk/jruby/jruby-1.5.5/bin/jruby
-
 # Copyright 2011 Michael S. Kenniston
 # (mike@MathematicsPracticeProblems.com).
 #
@@ -27,7 +25,7 @@ module MathematicsPracticeProblems
 class ProblemSet
   def initialize(options, maker_list)
     @options = { :basename => 'test',
-                 :num_cols => 2,
+                 :num_columns => 2,
                  :probs_per_page => 30,
                  :num_pages => 100,
                  :rule_thickness => "0.3pt",
@@ -54,7 +52,7 @@ class ProblemSet
       f.puts "{\\small #{header}}"
       f.puts "\\\\"
       f.puts "\\rule{\\textwidth}{#{@options[:rule_thickness]}}"
-      f.puts "\\begin{multicols}{#{@options[:num_cols]}}"
+      f.puts "\\begin{multicols}{#{@options[:num_columns]}}"
       (1..@options[:probs_per_page]).each do
         break if item_number > last_item_number
         f.puts "\\begin{minipage}{\\columnwidth}"

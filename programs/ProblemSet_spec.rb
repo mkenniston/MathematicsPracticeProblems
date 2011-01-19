@@ -1,5 +1,3 @@
-#!/home/msk/jruby/jruby-1.5.5/bin/jruby
-
 # Copyright 2011 Michael S. Kenniston
 # (mike@MathematicsPracticeProblems.com).
 #

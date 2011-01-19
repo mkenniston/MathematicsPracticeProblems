@@ -1,5 +1,3 @@
-#!/home/msk/jruby/jruby-1.5.5/bin/jruby
-
 # Copyright 2011 Michael S. Kenniston
 # (mike@MathematicsPracticeProblems.com).
 #
@@ -22,27 +20,43 @@
 #
 # Given a list of ProblemMakers, create a PDF file full of generated problems.
 
+require 'ProblemSet'
+require 'LowestTerms'
+
 module MathematicsPracticeProblems
 
-def main
+def self.main
+  maker = LowestTerms.new({:limit => 20,
+                           :include_zero => false,
+                           :include_one => false,
+                           :include_irreducible => false,
+                          })
+  set = ProblemSet.new({:basename => 'LowestTerms-20',
+                        :num_columns => 4, :probs_per_page => 28
+                       }, [maker])
+  set.print
+
   maker = LowestTerms.new({:limit => 20})
-  set = ProblemSet.new({:basename => 'LowestTerms-xyz-20',
+  set = ProblemSet.new({:basename => 'LowestTerms-zoa-20',
                         :num_columns => 4, :probs_per_page => 28
                        }, [maker])
   set.print
+
   maker = LowestTerms.new({:limit => 100})
-  set = ProblemSet.new({:basename => 'LowestTerms-xyz-100',
+  set = ProblemSet.new({:basename => 'LowestTerms-zoa-100',
                         :num_columns => 4, :probs_per_page => 28
                        }, [maker])
   set.print
+
   maker = LowestTerms.new({:limit => 1000})
-  set = ProblemSet.new({:basename => 'LowestTerms-xyz-1000',
+  set = ProblemSet.new({:basename => 'LowestTerms-zoa-1000',
                         :num_columns => 4, :probs_per_page => 28
                        }, [maker])
   set.print
-end
+end  # main
+end  # module
 
 if __FILE__ == $PROGRAM_NAME
-  main
+  MathematicsPracticeProblems::main
 end
 

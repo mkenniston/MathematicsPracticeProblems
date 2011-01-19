@@ -1,5 +1,3 @@
-#!/home/msk/jruby/jruby-1.5.5/bin/jruby
-
 # Copyright 2011 Michael S. Kenniston
 # (mike@MathematicsPracticeProblems.com).
 #
@@ -84,13 +82,13 @@ class LowestTerms < ProblemMaker
   def format prob
     q_num, q_den, a_num, a_den = prob
     question = "Reduce to lowest terms: " +
-               "\\[\\frac{#{q_num}}{#{q_den}}\\]"
+               "\\[\\frac{#{q_num}}{#{q_den}}=\\hspace{3em}\\]"
     if a_num == 0
       answer = "\\[0\\]"
-    elsif a_num == ans_den
+    elsif a_num == a_den
       answer = "\\[1\\]"
     else
-      answer = "\\[\\frac{#{ans_num}}{#{ans_den}}\\]"
+      answer = "\\[\\frac{#{a_num}}{#{a_den}}\\]"
     end
     [question, answer]
   end
