@@ -1,0 +1,57 @@
+
+/* CSS for MathematicsPracticeProblems.com */
+
+html {
+  background:#f4f4ff;
+}
+body,h1,h2,h3,h4,h5 {
+  font-family:verdana,helvetica,arial,sans-serif;
+  line-height:1.4em;
+}
+h1,h2,h3,h4,h5 {
+  color:#222288;
+}
+hr.heavy-bar {
+  color:#222288;
+  background-color:#222288;
+  height:4px;
+}
+.top-header{
+}
+.left-navbar {
+  background-color:#222288;
+  vertical-align:top;
+  padding:15px;
+}
+ul.navigation {
+  width:10em;
+  margin:0;
+  padding:0;
+}
+ul.navigation li {
+  list-style:none;
+}
+ul.navigation ul {
+  margin-left:1.5em;
+  width:8.5em;
+}
+.navigation a:link, .navigation a:visited {
+  display:block;
+  font-weight:bold;
+  color:white;
+  text-decoration:none;
+  padding:4px;
+}
+.navigation a:hover {
+  background-color:#5555bb;
+}
+.main-body {
+  padding:30px;
+  padding-top:0;
+  padding-bottom:0;
+  vertical-align:top;
+}
+p.copyright {
+  font-size:65%;
+  text-align:center;
+}
